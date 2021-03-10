@@ -1,0 +1,31 @@
+version: '3.4'
+services:
+  influxdb:
+    image: influxdb:1.8
+    volumes:
+    - influxdb:/var/lib/influxdb
+    expose:
+      - 8086
+
+  telegraf:
+    image: telegraf
+    depends_on:
+    - influxdb
+    volumes:
+    - ./telegraf/:/etc/telegraf
+    ports:
+      - 57000:57000
+    entrypoint: ["telegraf","--config","/etc/telegraf/telegraf.conf","--config-directory","/etc/telegraf/telegraf.d/"]
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+    - influxdb
+    volumes:
+    - ./grafana/:/var/lib/grafana
+    ports:
+    - 3000:3000
+
+volumes:
+  influxdb:
+    driver: local
