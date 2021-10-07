@@ -20,6 +20,8 @@ wlc:
       - /wireless-location-oper:location-oper-data
       - /cdp-ios-xe-oper:cdp-neighbor-details/cdp-ios-xe-oper:cdp-neighbor-detail
       - /if:interfaces-state/if:interface/if:statistics
+      - /trustsec-ios-xe-oper:trustsec-state/cts-rolebased-sgtmaps
+      - /poe-ios-xe-oper:poe-oper-data/poe-port-detail
     on-change:
 
 
