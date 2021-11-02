@@ -1,0 +1,273 @@
+[
+  {
+    "name": "Telemetry",
+    "tags": [],
+    "templates": [
+      {
+        "name": "telemetry_subscriptions",
+        "description": "",
+        "tags": [],
+        "deviceTypes": [
+          {
+            "productFamily": "Switches and Hubs"
+          }
+        ],
+        "softwareType": "IOS",
+        "softwareVariant": "XE",
+        "templateContent": "{% set subscription_id = 700 %}\n{% set sub_dict = {'CPU': '/process-cpu-ios-xe-oper:cpu-usage/cpu-utilization', \n                    'Memory': '/memory-ios-xe-oper:memory-statistics/memory-statistic', \n                    'POE':'/poe-ios-xe-oper:poe-oper-data/poe-port-detail',\n                    'Interface':'/if:interfaces-state/if:interface/if:statistics',\n                    'CDP':'/cdp-ios-xe-oper:cdp-neighbor-details/cdp-ios-xe-oper:cdp-neighbor-detail',\n                    'SGT':'/trustsec-ios-xe-oper:trustsec-state/cts-rolebased-sgtmaps',\n                    'SGT-2':'/trustsec-ios-xe-oper:trustsec-state/cts-rolebased-policies',\n                    'ENV':'/environment-ios-xe-oper:environment-sensors',\n                    'APP':'/app-hosting-ios-xe-oper:app-hosting-oper-data/app'}\n%}\n\n{% for key in sub_dict %}\n{% if key in subscriptions %}\nno telemetry ietf subscription {{subscription_id}}\ntelemetry ietf subscription {{subscription_id}}\n encoding encode-kvgpb\n filter xpath {{sub_dict[key]}}\n stream yang-push\n update-policy periodic {{subscription_period}}\n receiver ip address {{telemetry_server}} {{telemetry_port}} protocol grpc-tcp\n \n{% else %}\nno telemetry ietf subscription {{subscription_id}}\n{% endif %}\n{% set subscription_id = subscription_id + 1 %}\n{%- endfor %}",
+        "rollbackTemplateContent": "",
+        "templateParams": [
+          {
+            "parameterName": "telemetry_server",
+            "dataType": "IPADDRESS",
+            "defaultValue": null,
+            "description": null,
+            "required": true,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "Telegraf Server IP",
+            "instructionText": "IP Address of Telegraf Instance",
+            "group": null,
+            "order": 2,
+            "customOrder": 3,
+            "selection": {
+              "selectionType": null,
+              "selectionValues": {},
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [],
+            "key": null,
+            "provider": null,
+            "binding": ""
+          },
+          {
+            "parameterName": "subscriptions",
+            "dataType": "STRING",
+            "defaultValue": null,
+            "description": null,
+            "required": false,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "Subscriptions",
+            "instructionText": null,
+            "group": null,
+            "order": 4,
+            "customOrder": 1,
+            "selection": {
+              "selectionType": "MULTI_SELECT",
+              "selectionValues": {
+                "App Hosting": "APP",
+                "CDP Stats": "CDP",
+                "CPU Stats": "CPU",
+                "Environment Stats": "ENV",
+                "Interface Stats": "Interface",
+                "Memory Stats": "Memory",
+                "POE Stats": "POE",
+                "SGT Policies": "SGT-2",
+                "SGT Stats": "SGT"
+              },
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [],
+            "key": null,
+            "provider": null,
+            "binding": ""
+          },
+          {
+            "parameterName": "subscription_period",
+            "dataType": "INTEGER",
+            "defaultValue": null,
+            "description": null,
+            "required": true,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "Subscription Push Period",
+            "instructionText": "Period to send update in ms",
+            "group": null,
+            "order": 1,
+            "customOrder": 2,
+            "selection": {
+              "selectionType": null,
+              "selectionValues": {},
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [
+              {
+                "minValue": 1000,
+                "maxValue": 300000,
+                "id": null
+              }
+            ],
+            "key": null,
+            "provider": null,
+            "binding": ""
+          },
+          {
+            "parameterName": "telemetry_port",
+            "dataType": "INTEGER",
+            "defaultValue": null,
+            "description": null,
+            "required": true,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "gRPC Port",
+            "instructionText": "gRPC port running on Telegraf",
+            "group": null,
+            "order": 3,
+            "customOrder": 4,
+            "selection": {
+              "selectionType": null,
+              "selectionValues": {},
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [],
+            "key": null,
+            "provider": null,
+            "binding": ""
+          }
+        ],
+        "rollbackTemplateParams": [],
+        "composite": false,
+        "containingTemplates": [],
+        "language": "JINJA",
+        "promotedTemplateContent": "{% set subscription_id = 700 %}\n{% set sub_dict = {'CPU': '/process-cpu-ios-xe-oper:cpu-usage/cpu-utilization', \n                    'Memory': '/memory-ios-xe-oper:memory-statistics/memory-statistic', \n                    'POE':'/poe-ios-xe-oper:poe-oper-data/poe-port-detail',\n                    'Interface':'/if:interfaces-state/if:interface/if:statistics',\n                    'CDP':'/cdp-ios-xe-oper:cdp-neighbor-details/cdp-ios-xe-oper:cdp-neighbor-detail',\n                    'SGT':'/trustsec-ios-xe-oper:trustsec-state/cts-rolebased-sgtmaps',\n                    'SGT-2':'/trustsec-ios-xe-oper:trustsec-state/cts-rolebased-policies',\n                    'ENV':'/environment-ios-xe-oper:environment-sensors',\n                    'APP':'/app-hosting-ios-xe-oper:app-hosting-oper-data/app'}\n%}\n\n{% for key in sub_dict %}\n{% if key in subscriptions %}\nno telemetry ietf subscription {{subscription_id}}\ntelemetry ietf subscription {{subscription_id}}\n encoding encode-kvgpb\n filter xpath {{sub_dict[key]}}\n stream yang-push\n update-policy periodic {{subscription_period}}\n receiver ip address {{telemetry_server}} {{telemetry_port}} protocol grpc-tcp\n \n{% else %}\nno telemetry ietf subscription {{subscription_id}}\n{% endif %}\n{% set subscription_id = subscription_id + 1 %}\n{%- endfor %}",
+        "promotedTemplateParams": [
+          {
+            "parameterName": "telemetry_server",
+            "dataType": "IPADDRESS",
+            "defaultValue": null,
+            "description": null,
+            "required": true,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "Telegraf Server IP",
+            "instructionText": "IP Address of Telegraf Instance",
+            "group": null,
+            "order": 2,
+            "customOrder": 3,
+            "selection": {
+              "selectionType": null,
+              "selectionValues": {},
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [],
+            "key": null,
+            "provider": null,
+            "binding": "",
+            "id": null
+          },
+          {
+            "parameterName": "subscription_period",
+            "dataType": "INTEGER",
+            "defaultValue": null,
+            "description": null,
+            "required": true,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "Subscription Push Period",
+            "instructionText": "Period to send update in ms",
+            "group": null,
+            "order": 1,
+            "customOrder": 2,
+            "selection": {
+              "selectionType": null,
+              "selectionValues": {},
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [
+              {
+                "minValue": 1000,
+                "maxValue": 300000,
+                "id": null
+              }
+            ],
+            "key": null,
+            "provider": null,
+            "binding": "",
+            "id": null
+          },
+          {
+            "parameterName": "telemetry_port",
+            "dataType": "INTEGER",
+            "defaultValue": null,
+            "description": null,
+            "required": true,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "gRPC Port",
+            "instructionText": "gRPC port running on Telegraf",
+            "group": null,
+            "order": 3,
+            "customOrder": 4,
+            "selection": {
+              "selectionType": null,
+              "selectionValues": {},
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [],
+            "key": null,
+            "provider": null,
+            "binding": "",
+            "id": null
+          },
+          {
+            "parameterName": "subscriptions",
+            "dataType": "STRING",
+            "defaultValue": null,
+            "description": null,
+            "required": false,
+            "notParam": false,
+            "paramArray": false,
+            "displayName": "Subscriptions",
+            "instructionText": null,
+            "group": null,
+            "order": 4,
+            "customOrder": 1,
+            "selection": {
+              "selectionType": "MULTI_SELECT",
+              "selectionValues": {
+                "App Hosting": "APP",
+                "CDP Stats": "CDP",
+                "CPU Stats": "CPU",
+                "Environment Stats": "ENV",
+                "Interface Stats": "Interface",
+                "Memory Stats": "Memory",
+                "POE Stats": "POE",
+                "SGT Policies": "SGT-2",
+                "SGT Stats": "SGT"
+              },
+              "defaultSelectedValues": [],
+              "id": null
+            },
+            "range": [],
+            "key": null,
+            "provider": null,
+            "binding": "",
+            "id": null
+          }
+        ],
+        "customParamsOrder": true,
+        "createTime": 1634826647188,
+        "lastUpdateTime": 1635820197056,
+        "latestVersionTime": 1634826647188,
+        "projectName": "Telemetry",
+        "validationErrors": {
+          "templateErrors": [],
+          "rollbackTemplateErrors": [],
+          "templateId": "c105479a-d488-4c9f-8129-89fad981d915",
+          "templateVersion": null
+        },
+        "projectAssociated": true,
+        "documentDatabase": false
+      }
+    ],
+    "isDeletable": true
+  }
+]
